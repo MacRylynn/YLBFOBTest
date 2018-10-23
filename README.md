@@ -20,8 +20,8 @@
  
  云计算，可以通过面板开启云计算。后端使用阿里云最基础的服务器（1CPU/2GB），通过本地将服务器传到服务器，处理之后返回结果然后在本地解析。
  # 主界面UI
- ![Image text](https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/UI.png)
+ ![Image 主界面](https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/UI.png)
  # 记录查询页
-  ![Image text](https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/LOG.png)
+  ![Image 记录查询页](https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/LOG.png)
 # 记录详情页
-(https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/LOGDETAIL.png)
+  ![Image 记录详情页](https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/LOGDETAIL.png)
