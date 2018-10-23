@@ -19,3 +19,9 @@
  检测阶段，默认开启4个线程，可以通过面板上面选择2、4或者6个线程并发检测，可以根据CPU的负载情况自由调整线程数。
  
  云计算，可以通过面板开启云计算。后端使用阿里云最基础的服务器（1CPU/2GB），通过本地将服务器传到服务器，处理之后返回结果然后在本地解析。
+ # 主界面UI
+ ![Image text](https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/UI.png)
+ # 记录查询页
+  ![Image text](https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/LOG.png)
+# 记录详情页
+(https://raw.githubusercontent.com/MacRylynn/YLBFOBTest/master/image/LOGDETAIL.png)
