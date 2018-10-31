@@ -1,0 +1,446 @@
+/**
+	 * 
+	 * 单张图片测试
+	 * 
+	 * @param f
+	 * @throws SocketTimeoutException
+	 * 
+	 */
+
+	private void test(File f, String testName, boolean cloudSwitch) throws SocketTimeoutException {
+//		//跳过非图片文件
+//		String[] imageType=new String[]{"BMP","JPG","JPEG","PNG","PCD","PSD","DXF","TIFF","PCX","bmp","jpg","jpeg","png","pcd","psd","dxf","tiff","pcx"};
+//		
+//		
+//		String  postfix=f.getName().split("\\.")[f.getName().split("\\.").length-1];
+//		////System.out.println(postfix+"\\.\\\\\\\\\\\\\\\\\\\\\\\\");
+//		boolean b=false;
+//		for(int i=0;i<imageType.length;i++){
+//			if(postfix.equals(imageType[i])){
+//				b=true;break;
+//			}
+//		}
+//		if(!b)return;
+		
+		String fileName = "Tra" + f.getName();
+
+		cutImage(160, 0, 960, 960, f.getAbsolutePath(), fileName);
+
+		Process pro;
+		String property = null;// 性质
+		String p = null;// 概率的字符串
+		String orgString = null;
+		String propertyString = new String();// 性质
+		double ip = 0;// 最大概率值
+		List<String> list;// 用来存放预测结果
+		
+		String ppp=null;//用于计算时结果为L时
+		String pollution="0";//是否污染
+		try {
+			
+			if (cloudSwitch) {
+				// 使用云计算
+				String result = cloudCalc(f.getAbsolutePath());
+				if (!result.startsWith("{\"POST\"")) {
+					throw new Exception();
+				}
+				String[] re = result.split("\"label\":");
+				String p1 = re[1].split("}")[0];
+				String p2 = re[2].split("}")[0];
+				String p3 = re[3].split("}")[0];
+				String p4 = re[4].split("}")[0];
+				String p5 = re[5].split("}")[0];
+				property = p1.split(",")[0];
+				ppp=p2.split(",")[0];
+				ip = Double.parseDouble(p1.split(":")[1].substring(0, 5));
+
+				list = new ArrayList<>();
+				list.add(p1.split(",\"probability\"")[0] + p1.split(",\"probability\"")[1]);
+				list.add(p2.split(",\"probability\"")[0] + p2.split(",\"probability\"")[1]);
+				list.add(p3.split(",\"probability\"")[0] + p3.split(",\"probability\"")[1]);
+				list.add(p4.split(",\"probability\"")[0] + p4.split(",\"probability\"")[1]);
+				list.add(p5.split(",\"probability\"")[0] + p5.split(",\"probability\"")[1]);
+			
+				
+//				int lIndex=result.indexOf("L");
+//				
+//				String ts=result.substring(lIndex+18,lIndex+19);
+//				if(ts.equals("}")){
+//					
+//					int i=Integer.parseInt(result.substring(lIndex+17,lIndex+18));
+//					if(i>=1)pollution="1";
+//				}else{
+//					String s1=result.substring(lIndex+17, lIndex+18);
+//					int is1=Integer.parseInt(s1);
+//					//System.out.println(lIndex);
+//					//System.out.println(result);
+//					
+//					
+//					if(is1==0){
+//						String s2=result.substring(lIndex+19, lIndex+20);
+//						int is2=Integer.parseInt(s2);
+//						if(is2>=5){
+//							////System.out.println(is2+"      云计算");
+//							pollution="1";
+//						}
+//					}
+//				}
+				//[{"label":"L","probability":0.8624655604362488},{"label":"P","probability":0.6971262097358704},{"label":"N","probability":0.21789129078388214},{"label":"WP","probability":0.0741361677646637},{"label":"Y","probability":1.6488706023665145e-05}]
+				//拆解出L的概率
+				StringBuffer sb=new StringBuffer();
+				boolean isL=false;
+				for(int i=0;i<result.length();i++){
+					if(result.charAt(i)=='L'){
+						isL=true;
+					}
+					if(isL&&(result.charAt(i)=='}')){
+						isL=false;break;
+					}
+					if(isL){
+						sb.append(result.charAt(i));
+					}
+				}
+				double lp=Double.parseDouble(sb.toString().split(":")[1].trim());
+				System.out.println(result);
+				System.out.println(lp);
+				if(lp>0.0009240175){
+					pollution="1";
+				}
+//				
+				property = property.substring(1, 2);
+				
+				
+			} else {
+				////System.out.println("不启用云计算&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&fileName" + fileName);
+				pro = Runtime.getRuntime().exec(
+
+						"classify.exe -g FOB.pb -l imagenet_slim_labels.txt -iw 224 -ih 224 -il input_4 -ol  output_node0 -im 39.50070953369140625,39.50070953369140625,39.50070953369140625 -is 55.029804229736328125,54.22267913818359375,57.02275848388671875 -i "
+
+								+ ".\\Transit\\" + fileName);
+
+				BufferedReader br = new BufferedReader(new InputStreamReader(pro.getInputStream()));
+
+				String str;
+
+				list = new ArrayList<String>();
+
+				while ((str = br.readLine()) != null) {
+
+					list.add(str);
+
+				}
+
+				pro.destroy();
+				////System.out.println(list);
+
+				// list.get(0)就是最大的概率
+
+				orgString = list.get(0);
+
+				p = orgString.split("\\:")[1];// 概率值
+
+				ip = Double.parseDouble(p);
+
+				property = list.get(0).substring(0, 1);
+				ppp=list.get(1).substring(0,1);
+
+				br.close();
+				String ss=list.toString();//ss是测试的所有输出字符串
+				
+				
+//				int lIndex=ss.indexOf("L");
+//				String s=ss.substring(lIndex+8,lIndex+9);
+//				if(s.equals(",")){
+//					
+//					int i=Integer.parseInt(ss.substring(lIndex+7,lIndex+8));
+//					if(i>=1)pollution="1";
+//				}else{
+//					String ts=ss.substring(lIndex+7,lIndex+8);
+//					int i=Integer.parseInt(ts);
+//					if(i==0){
+//						String te=ss.substring(lIndex+9,lIndex+10);
+//						int pollu=Integer.parseInt(te);//L概率的小数点后一位
+//						if(pollu>=5)
+//							pollution="1";
+//					}
+//					
+//				}
+				//[L (0): 1, WP (3): 0.932879, P (2): 0.02666, N (1): 0.0256061, Y (4): 4.12693e-11]
+				//拆解出L的概率
+				StringBuffer sb=new StringBuffer();
+				boolean isL=false;
+				for(int i=0;i<ss.length();i++){
+					if(ss.charAt(i)=='L'){
+						isL=true;
+					}
+					if(isL&&(ss.charAt(i)==','||ss.charAt(i)==']')){
+						isL=false;break;
+					}
+					if(isL){
+						sb.append(ss.charAt(i));
+					}
+				}
+				//lp即L的概率
+				double lp=Double.parseDouble(sb.toString().split(":")[1].trim());
+				System.out.println(ss);
+				System.out.println(lp);
+				if(lp>0.01){
+					pollution="1";
+				}
+				
+
+				
+			}
+			switch (property) {
+
+			case "P":
+
+				propertyString = "P";
+
+				break;
+
+			case "N":
+
+				propertyString = "N";
+
+				break;
+
+			case "W":
+
+				propertyString = "WP";
+
+				break;
+
+			case "L":
+				pollution="1";
+				if(cloudSwitch){
+					////System.out.println(ppp+"W图测试");
+					if(ppp.equals("W")){
+						propertyString="WP";
+					}else{
+						propertyString=ppp.substring(1,2);
+					}
+					break;
+				}else{
+					if(ppp.equals("W")){
+						propertyString="WP";
+					}else{
+						propertyString=ppp.substring(0,1);
+					}
+					break;
+				}
+			case "Y":
+				pollution="Y";
+				propertyString = "Y";
+
+				break;
+
+			default:
+
+				break;
+
+			}
+
+			if (cloudSwitch)
+				showResult(f, list, true);
+			else
+				showResult(f, list, false);
+
+			// 将结果写入out.csv及groud_truth.csv
+
+			Date date = new Date();
+
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+			String dateString = formatter.format(date);// 时间
+
+			String result = testName + "," + dateString + "," + propertyString + "," + ip * 100 + "%" + ","
+
+					+ f.getName() + "\r\n";
+
+			////System.out.println(result);
+			
+			File fil = new File(".\\out.csv");			
+			if (!fil.exists()) {			
+				fil.createNewFile();				
+				// 写进表头
+				FileWriter pw= new FileWriter(fil, true);				
+				String Tab = "Name" + "," + "Time" + "," + "Result" + "," + "Confidence" + "," + "ImageName";
+				pw.write(Tab + "\r\n");
+				pw.close();				
+			}
+
+			FileWriter pw = new FileWriter(fil, true);
+			
+			File file=new File(".\\groud_truth.csv");			
+			if(!file.exists()){
+				String tab="Name"+","+"Value"+","+"Pollution";
+				file.createNewFile();
+				FileWriter pw2=new FileWriter(file,true);
+				pw2.write(tab+"\r\n");//第一次创建，写入表头
+				pw2.close();
+			}
+			FileWriter pw2=new FileWriter(file,true);
+			String result2=f.getName()+","+propertyString+","+pollution+"\r\n";
+			pw2.write(result2);
+			pw.write(result);
+			pw2.close();
+
+			pw.flush();
+
+			pw.close();
+
+			// 将图片分到对应的文件夹
+
+			copy(f, propertyString, fileName);
+
+			File fi = new File(".\\Transit\\" + fileName);
+
+			fi.delete();
+
+			now++;
+
+//			////System.out.println("*********************当前进度："+Math.round((now/size)*100)+"%");
+//			label_2.setIcon(null);
+		} catch (Exception e) {
+
+			// TODO Auto-generated catch block
+			SocketTimeoutException se = new SocketTimeoutException();
+			se.initCause(e);
+			throw se;
+//			e.printStackTrace();
+
+		}
+
+	}
+
+	private void showResult(File f, List<String> list, boolean cloudSwitch) {
+
+//////System.out.println("===================="+list);
+
+//		ImageIcon ic = null;
+//
+		try {
+
+			BufferedImage bi = ImageIO.read(new File(f.getAbsolutePath()));
+
+			ImageProducer producer = bi.getSource();
+
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+			Image image2 = toolkit.createImage(producer);
+
+			ImageIcon image = new ImageIcon(image2);
+			image.setDescription(f.getAbsolutePath());
+			image.setImage(image.getImage().getScaledInstance(570, 428, Image.SCALE_DEFAULT));
+			label_2.setIcon(image);
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		}
+
+		double result1 = Double.parseDouble(list.get(0).split("\\:")[1]);
+
+		if (result1 > 1)
+
+			result1 = 0;
+
+		progressBar.setValue((new Double(result1 * 10000)).intValue());
+
+		double result2 = Double.parseDouble(list.get(1).split("\\:")[1]);
+
+		if (result2 > 1)
+
+			result2 = 0;
+
+		progressBar_1.setValue((new Double(result2 * 10000)).intValue());
+
+		double result3 = Double.parseDouble(list.get(2).split("\\:")[1]);
+
+		if (result3 > 1)
+
+			result3 = 0;
+
+		progressBar_2.setValue((new Double(result3 * 10000)).intValue());
+
+//		////System.out.println(list.get(3));
+
+//		////System.out.println(list.get(3).substring(7, 12));
+
+		double result4 = Double.parseDouble(list.get(3).split("\\:")[1]);
+
+		if (result4 > 1)
+
+			result4 = 0;
+
+		progressBar_3.setValue((new Double(result4 * 10000)).intValue());
+
+		double result5 = Double.parseDouble(list.get(4).split("\\:")[1]);
+
+		if (result5 > 1)
+
+			result5 = 0;
+
+		progressBar_4.setValue((new Double(result5 * 10000)).intValue());
+
+		String s = "From local:	";
+		if (cloudSwitch) {
+			s = "From cloud:	";
+		}
+		textField_5.setText(s + list.get(0).split(":")[0]);
+
+		textField.setText(s + list.get(1).split(":")[0]);
+
+		textField_1.setText(s + list.get(2).split(":")[0]);
+
+		textField_2.setText(s + list.get(3).split(":")[0]);
+
+		textField_3.setText(s + list.get(4).split(":")[0]);
+
+	}
+
+	// 复制图片
+
+	private void copy(File f, String propertyString, String fileName) {
+
+		try {
+
+			FileInputStream fis = new FileInputStream(f);
+
+			File dir = new File(".\\TestResult\\" + propertyString);
+
+			if (!dir.exists()) {
+
+				dir.mkdirs();
+
+			}
+
+			File fi = new File(".\\TestResult\\" + propertyString + "\\" + fileName);
+
+			FileOutputStream fos = new FileOutputStream(fi);
+
+			byte[] buf = new byte[1024];
+
+			int n = 0;
+
+			while ((n = fis.read(buf)) != -1) {
+
+				fos.write(buf);
+
+			}
+
+			fos.close();
+
+			fis.close();
+
+		} catch (Exception e) {
+
+			// TODO Auto-generated catch block
+
+			e.printStackTrace();
+
+		}
+
+	}

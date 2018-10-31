@@ -973,7 +973,7 @@ public class UI {
 					while (radioBtns.hasMoreElements()) {
 						AbstractButton btn = radioBtns.nextElement();
 						if (btn.isSelected()) {
-							s = btn.getText().trim().substring(0, 1);
+							s = btn.getText().split("\\ ")[0];
 							break;
 						}
 					}
@@ -1044,18 +1044,18 @@ public class UI {
 		label.setBounds(599, 483, 72, 18);
 		panel.add(label);
 
-		radioButton = new JRadioButton("2线并发");
+		radioButton = new JRadioButton("4 线并发");
 		radioButton.setBounds(646, 479, 81, 27);
 		panel.add(radioButton);
 		radioButton.setFont(new Font("微软雅黑 Light", Font.PLAIN, 14));
 
-		radioButton_1 = new JRadioButton("4线并发");
+		radioButton_1 = new JRadioButton("8 线并发");
 		radioButton_1.setBounds(733, 479, 81, 27);
 		panel.add(radioButton_1);
 		radioButton_1.setFont(new Font("微软雅黑 Light", Font.PLAIN, 14));
 
-		radioButton_2 = new JRadioButton("6线并发");
-		radioButton_2.setBounds(822, 479, 81, 27);
+		radioButton_2 = new JRadioButton("12 线并发");
+		radioButton_2.setBounds(822, 479, 92, 27);
 		panel.add(radioButton_2);
 		radioButton_2.setFont(new Font("微软雅黑 Light", Font.PLAIN, 14));
 
