@@ -4,7 +4,7 @@
 # 主要是软件部分
  软件使用Eclipse+Swing编写（界面风格略丑），使用IOS的扁平化风格的UI样式；这种风格详情https://blog.csdn.net/vison155142/article/details/52469116 自己写了类来实现背景图的切换。
  
- 检测算法使用深度学习（我不负责算法）文件夹里面的.pb文件是深度学习模型。
+ 检测算法使用深度学习文件夹里面的.pb文件是深度学习模型。
  
  主要采用封装好的exe来调用检测算法文件夹里面的classify.exe封装调用模型的API，imagenet_slim_labels.txt是分类的详细情况。
  
