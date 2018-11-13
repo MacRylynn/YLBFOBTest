@@ -1,5 +1,5 @@
-# YLBFOBTest 软件设计大赛
-要求根据给定的[FOB](http://www.silangsci.com/liujianzhong-Products-20914269/)卡的图片来判断卡片的性质（阴、阳、弱阳、异常）。
+# YLBFOBTest
+FOB卡检测软件——软件部分。对于给出的[FOB卡片](http://www.silangsci.com/liujianzhong-Products-20914269/)图像进行分级，给出阴、阳、弱阳、异常等结果。
 
 算法部分[请看这里](https://github.com/Sandiagal/DeepFOB)。
 # 软件部分
