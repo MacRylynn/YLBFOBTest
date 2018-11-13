@@ -1,8 +1,11 @@
 # YLBFOBTest 软件设计大赛
-要求根据给定的FOB卡的图片来判断卡片的性质（阴、阳、弱阳、异常）
-关于FOB卡的介绍 http://www.silangsci.com/liujianzhong-Products-20914269/
-# 主要是软件部分
- 软件使用Eclipse+Swing编写（界面风格略丑），使用IOS的扁平化风格的UI样式；这种风格详情https://blog.csdn.net/vison155142/article/details/52469116 自己写了类来实现背景图的切换。
+要求根据给定的[FOB](http://www.silangsci.com/liujianzhong-Products-20914269/)卡的图片来判断卡片的性质（阴、阳、弱阳、异常）。
+
+算法部分[请看这里](https://github.com/Sandiagal/DeepFOB)。
+# 软件部分
+ 软件使用Eclipse+Swing编写，使用IOS的[扁平化风格](https://blog.csdn.net/vison155142/article/details/52469116)的UI样式。
+ 
+ 自己写了类来实现背景图的切换。
  
  检测算法使用深度学习文件夹里面的.pb文件是深度学习模型。
  
